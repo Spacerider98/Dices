@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Dual Dice Roll</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            perspective: 1000px; /* Essential for 3D depth */
+            margin: 0;
+        }
+
+        .dice-container {
+            display: flex;
+            gap: 100px;
+            margin-bottom: 50px;
+        }
+
+        /* The 3D Cube */
+        .die {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            transform-style: preserve-3d;
+            transition: transform 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        .side {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: white;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        /* Position the 6 sides in 3D space */
+        .front  { transform: rotateY(0deg) translateZ(50px); }
+        .back   { transform: rotateY(180deg) translateZ(50px); }
+        .right  { transform: rotateY(90deg) translateZ(50px); }
+        .left   { transform: rotateY(-90deg) translateZ(50px); }
+        .top    { transform: rotateX(90deg) translateZ(50px); }
+        .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+        /* Dot styling */
+        .side::before { content: attr(data-dot); font-size: 60px; }
+
+        button {
+            padding: 15px 40px;
+            font-size: 20px;
+            cursor: pointer;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="dice-container">
+        <div id="die1" class="die">
+            <div class="side front" data-dot="1"></div>
+            <div class="side back" data-dot="6"></div>
+            <div class="side right" data-dot="3"></div>
+            <div class="side left" data-dot="4"></div>
+            <div class="side top" data-dot="2"></div>
+            <div class="side bottom" data-dot="5"></div>
+        </div>
+
+        <div id="die2" class="die">
+            <div class="side front" data-dot="1"></div>
+            <div class="side back" data-dot="6"></div>
+            <div class="side right" data-dot="3"></div>
+            <div class="side left" data-dot="4"></div>
+            <div class="side top" data-dot="2"></div>
+            <div class="side bottom" data-dot="5"></div>
+        </div>
+    </div>
+
+    <button onclick="rollDice()">Roll 3D Dice</button>
+
+    <script>
+        function rollDice() {
+            const dice = document.querySelectorAll('.die');
+            
+            dice.forEach(die => {
+                // Generate a random result (1-6)
+                const result = Math.floor(Math.random() * 6) + 1;
+                
+                // Randomly add extra rotations for the "spinning" effect
+                const xRotation = (Math.floor(Math.random() * 4) + 5) * 360; 
+                const yRotation = (Math.floor(Math.random() * 4) + 5) * 360;
+
+                // Map results to specific degree offsets
+                const resultDegrees = {
+                    1: { x: 0, y: 0 },
+                    6: { x: 0, y: 180 },
+                    3: { x: 0, y: -90 },
+                    4: { x: 0, y: 90 },
+                    2: { x: -90, y: 0 },
+                    5: { x: 90, y: 0 }
+                };
+
+                const finalX = xRotation + resultDegrees[result].x;
+                const finalY = yRotation + resultDegrees[result].y;
+
+                die.style.transform = `rotateX(${finalX}deg) rotateY(${finalY}deg)`;
+            });
+        }
+    </script>
+</body>
+</html>
+
